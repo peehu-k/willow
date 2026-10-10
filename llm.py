@@ -1,13 +1,16 @@
 """Generative fallback for open-ended requests the intent classifier doesn't cover.
 
-Backends:
-  * Claude (if ANTHROPIC_API_KEY is set) - fast, high-quality answers.
-  * Qwen2.5-0.5B-Instruct running locally on CPU - free, no key needed.
-Both stream text so the UI can show the answer as it is written.
+Backends, chosen from environment variables:
+  * Groq (GROQ_API_KEY)        - free tier, hosted Llama models, very fast.
+  * Claude (ANTHROPIC_API_KEY) - highest quality.
+Without a key the chatbot answers open-ended questions from Wikipedia instead (see chatbot.py).
+Both backends stream text so the UI can show the answer as it is written.
 """
+import json
 import os
-import re
-import threading
+import sys
+import urllib.error
+import urllib.request
 
 SYSTEM_PROMPT = (
     "You are Willow, a calm, warm and friendly voice assistant. Your replies are shown in a chat "
@@ -18,15 +21,12 @@ SYSTEM_PROMPT = (
     "honestly. You have no live data such as news, weather or prices."
 )
 
-LONG_TASK = re.compile(r"\b(itinerary|plan|schedule|list|steps|recipe|essay|story|poem|routine|"
-                       r"outline|guide|ideas|tips|compare|comparison|write)\b", re.I)
-
 CLAUDE_MODEL = os.environ.get("WILLOW_CLAUDE_MODEL", "claude-opus-5-5")
-LOCAL_MODEL = os.environ.get("WILLOW_LOCAL_MODEL", "Qwen/Qwen2.5-0.5B-Instruct")
+ERROR_REPLY = "Sorry, I couldn't reach my thinking service just now. Please try again in a moment."
 
 
 def _clean(text):
-    """Strip markdown symbols the small model sometimes emits."""
+    """Strip markdown symbols models sometimes emit."""
     return text.replace("**", "").replace("__", "").replace("###", "").replace("##", "")
 
 
@@ -37,19 +37,16 @@ class Generator:
         elif os.environ.get("GROQ_API_KEY"):
             self.backend = "groq"
         else:
-            self.backend = "local"
-        self._lock = threading.Lock()  # one local generation at a time (CPU bound)
-        self._model = self._tok = self._client = None
+            self.backend = "none"
+        self._client = None
 
     @property
     def label(self):
-        return {"claude": "Claude", "groq": "Llama (Groq)", "local": "Qwen2.5 (local)"}[self.backend]
+        return {"claude": "Claude", "groq": "Groq", "none": "none"}[self.backend]
 
     def warm_up(self):
-        if self.backend == "local":
-            self._load_local()
+        pass
 
-    # ---------- message building ----------
     def build_messages(self, history, question, notes=None):
         msgs = [{"role": r, "content": t} for r, t in history[-6:]]
         content = question
@@ -62,58 +59,92 @@ class Generator:
         return msgs
 
     def max_tokens_for(self, question):
-        if self.backend != "local":
-            return 1500
-        return 320 if LONG_TASK.search(question) else 170
+        return 1500
 
-    def local_max_tokens(self, max_tokens):
-        return min(max_tokens, 320)
-
-    # ---------- streaming ----------
     def stream(self, messages, max_tokens):
         """Yield text chunks."""
         if self.backend == "claude":
             yield from self._stream_claude(messages, max_tokens)
-        elif self.backend == "groq":
-            yield from self._stream_groq(messages, max_tokens)
         else:
-            yield from self._stream_local(messages, max_tokens)
+            yield from self._stream_groq(messages, max_tokens)
+
+    # ---------- Groq ----------
+    _GROQ_PREFERRED = ["llama-3.3-70b-versatile", "openai/gpt-oss-120b", "openai/gpt-oss-20b",
+                       "llama-3.1-8b-instant"]
+    _GROQ_SKIP = ("whisper", "guard", "tts", "playai", "orpheus", "safeguard", "embed", "vision")
+
+    def _groq_headers(self):
+        key = os.environ["GROQ_API_KEY"].strip().strip(chr(34)).strip(chr(39))
+        return {"Authorization": f"Bearer {key}", "Content-Type": "application/json",
+                "User-Agent": "WillowVoiceBot/1.0"}
+
+    def _groq_pick_model(self, refresh=False):
+        """Ask Groq which models this key can use and choose the best chat model.
+        Model names change over time, so nothing is hard-coded unless GROQ_MODEL is set."""
+        if os.environ.get("GROQ_MODEL"):
+            return os.environ["GROQ_MODEL"]
+        if getattr(self, "_groq_model", None) and not refresh:
+            return self._groq_model
+        try:
+            req = urllib.request.Request("https://api.groq.com/openai/v1/models", headers=self._groq_headers())
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                ids = [m["id"] for m in json.load(resp)["data"] if m.get("active", True)]
+        except Exception as e:
+            print(f"[groq] could not list models: {e!r}", file=sys.stderr, flush=True)
+            return self._GROQ_PREFERRED[0]
+        chosen = next((m for m in self._GROQ_PREFERRED if m in ids), None) or next(
+            (m for m in ids if not any(s in m.lower() for s in self._GROQ_SKIP)), self._GROQ_PREFERRED[0])
+        print(f"[groq] using model {chosen} (available: {len(ids)})", file=sys.stderr, flush=True)
+        self._groq_model = chosen
+        return chosen
 
     def _stream_groq(self, messages, max_tokens):
-        """Groq's hosted Llama models (free tier) via its OpenAI-style streaming endpoint."""
-        import json
-        import urllib.request
-        body = json.dumps({
-            "model": os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile"),
-            "messages": [{"role": "system", "content": SYSTEM_PROMPT}] + messages,
-            "max_tokens": max_tokens, "temperature": 0.5, "stream": True,
-        }).encode()
-        req = urllib.request.Request(
-            "https://api.groq.com/openai/v1/chat/completions", data=body, method="POST",
-            headers={"Authorization": f"Bearer {os.environ['GROQ_API_KEY']}",
-                     "Content-Type": "application/json", "User-Agent": "WillowVoiceBot/1.0"})
+        """Groq's hosted models (free tier) via its OpenAI-style streaming endpoint."""
         produced = False
-        try:
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                for raw in resp:
-                    line = raw.decode("utf-8").strip()
-                    if not line.startswith("data:"):
-                        continue
-                    data = line[5:].strip()
-                    if data == "[DONE]":
-                        break
-                    delta = json.loads(data)["choices"][0].get("delta", {}).get("content")
-                    if delta:
-                        produced = True
-                        yield _clean(delta)
-        except Exception:
-            if not produced:  # API unavailable: answer with the local model instead
-                yield from self._stream_local(messages, self.local_max_tokens(max_tokens))
+        for attempt in range(2):
+            model = self._groq_pick_model(refresh=attempt > 0)
+            payload = {
+                "model": model,
+                "messages": [{"role": "system", "content": SYSTEM_PROMPT}] + messages,
+                "max_tokens": max_tokens, "temperature": 0.5, "stream": True,
+            }
+            if "gpt-oss" in model:
+                payload["reasoning_effort"] = "low"  # these models think first; keep answers quick
+            body = json.dumps(payload).encode()
+            req = urllib.request.Request("https://api.groq.com/openai/v1/chat/completions", data=body,
+                                         method="POST", headers=self._groq_headers())
+            try:
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    for raw in resp:
+                        line = raw.decode("utf-8").strip()
+                        if not line.startswith("data:"):
+                            continue
+                        data = line[5:].strip()
+                        if data == "[DONE]":
+                            break
+                        choices = json.loads(data).get("choices") or [{}]
+                        delta = choices[0].get("delta", {}).get("content")
+                        if delta:
+                            produced = True
+                            yield _clean(delta)
+                return
+            except urllib.error.HTTPError as e:
+                # Shows in the hosting logs (the key is never printed)
+                print(f"[groq] HTTP {e.code} with model {model}: {e.read()[:300]!r}", file=sys.stderr, flush=True)
+                if e.code in (400, 404) and not produced and attempt == 0:
+                    continue  # model unavailable: re-list models and retry once
+                break
+            except Exception as e:
+                print(f"[groq] error: {e!r}", file=sys.stderr, flush=True)
+                break
+        if not produced:
+            yield ERROR_REPLY
 
     def _stream_claude(self, messages, max_tokens):
         import anthropic
         if self._client is None:
             self._client = anthropic.Anthropic()
+        produced = False
         try:
             with self._client.beta.messages.stream(
                 model=CLAUDE_MODEL,
@@ -125,40 +156,12 @@ class Generator:
                 extra_body={"fallbacks": "default"},
             ) as stream:
                 for text in stream.text_stream:
+                    produced = True
                     yield _clean(text)
                 final = stream.get_final_message()
             if final.stop_reason == "refusal":
                 yield "Sorry, I can't help with that one."
-        except anthropic.APIError:
-            # Network/API trouble: fall back to the local model for this answer
-            yield from self._stream_local(messages, self.local_max_tokens(max_tokens))
-
-    def _load_local(self):
-        if self._model is None:
-            import torch
-            from transformers import AutoModelForCausalLM, AutoTokenizer
-            torch.set_num_threads(max(1, os.cpu_count() or 1))
-            self._tok = AutoTokenizer.from_pretrained(LOCAL_MODEL)
-            self._model = AutoModelForCausalLM.from_pretrained(LOCAL_MODEL, dtype=torch.float32)
-            self._model.eval()
-
-    def _stream_local(self, messages, max_tokens):
-        import torch
-        from transformers import TextIteratorStreamer
-        self._load_local()
-        msgs = [{"role": "system", "content": SYSTEM_PROMPT}] + messages
-        enc = self._tok.apply_chat_template(msgs, add_generation_prompt=True,
-                                            return_tensors="pt", return_dict=True)
-        streamer = TextIteratorStreamer(self._tok, skip_prompt=True, skip_special_tokens=True)
-
-        def run():
-            with torch.no_grad():
-                self._model.generate(**enc, streamer=streamer, max_new_tokens=max_tokens,
-                                     do_sample=False, repetition_penalty=1.1)
-
-        with self._lock:
-            worker = threading.Thread(target=run, daemon=True)
-            worker.start()
-            for text in streamer:
-                yield _clean(text)
-            worker.join()
+        except anthropic.APIError as e:
+            print(f"[claude] error: {e!r}", file=sys.stderr, flush=True)
+            if not produced:
+                yield ERROR_REPLY
