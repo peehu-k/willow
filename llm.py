@@ -8,6 +8,8 @@ Both backends stream text so the UI can show the answer as it is written.
 """
 import json
 import os
+import sys
+import urllib.error
 import urllib.request
 
 SYSTEM_PROMPT = (
@@ -76,7 +78,7 @@ class Generator:
         }).encode()
         req = urllib.request.Request(
             "https://api.groq.com/openai/v1/chat/completions", data=body, method="POST",
-            headers={"Authorization": f"Bearer {os.environ['GROQ_API_KEY']}",
+            headers={"Authorization": f"Bearer {os.environ['GROQ_API_KEY'].strip().strip(chr(34)).strip(chr(39))}",
                      "Content-Type": "application/json", "User-Agent": "WillowVoiceBot/1.0"})
         produced = False
         try:
@@ -92,7 +94,13 @@ class Generator:
                     if delta:
                         produced = True
                         yield _clean(delta)
-        except Exception:
+        except urllib.error.HTTPError as e:
+            # Shows in the hosting logs, e.g. invalid key or retired model name (the key is never printed)
+            print(f"[groq] HTTP {e.code}: {e.read()[:300]!r}", file=sys.stderr, flush=True)
+            if not produced:
+                yield ERROR_REPLY
+        except Exception as e:
+            print(f"[groq] error: {e!r}", file=sys.stderr, flush=True)
             if not produced:
                 yield ERROR_REPLY
 
@@ -117,6 +125,7 @@ class Generator:
                 final = stream.get_final_message()
             if final.stop_reason == "refusal":
                 yield "Sorry, I can't help with that one."
-        except anthropic.APIError:
+        except anthropic.APIError as e:
+            print(f"[claude] error: {e!r}", file=sys.stderr, flush=True)
             if not produced:
                 yield ERROR_REPLY

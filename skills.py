@@ -4,6 +4,7 @@ import functools
 import json
 import operator
 import re
+import sys
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
@@ -91,7 +92,7 @@ _OPEN_ENDED = re.compile(
     r"make|create|write|plan|planning|itinerary|suggest|recommend|list|compare|difference|differences|"
     r"recipe|steps|ideas|help me|should i|what if|invent(?:ed|or)?|discover(?:ed)?|summari[sz]e|"
     r"translate|advice|teach me|give me (?:a|an|some|ideas|examples|tips)|best way|pros and cons)\b", re.I)
-_HEADERS = {"User-Agent": "WillowVoiceBot-StudentProject/1.0 (educational chatbot)"}
+_HEADERS = {"User-Agent": "WillowVoiceBot/1.0 (https://willow-ab10.onrender.com; student project) python-urllib"}
 
 
 def _get_json(url):
@@ -159,7 +160,8 @@ def wikipedia_answer(text):
         sentences = re.split(r"(?<=[.!?])\s+", summary["extract"])
         return {"title": summary.get("title", query), "answer": " ".join(sentences[:2]),
                 "url": summary.get("content_urls", {}).get("desktop", {}).get("page")}
-    except Exception:
+    except Exception as e:
+        print(f"[wikipedia] error: {e!r}", file=sys.stderr, flush=True)
         return None
 
 
