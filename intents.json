@@ -1,0 +1,745 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "hi",
+        "hello",
+        "hey",
+        "hey there",
+        "good morning",
+        "good afternoon",
+        "good evening",
+        "hello bot",
+        "hi there",
+        "is anyone there",
+        "howdy",
+        "greetings",
+        "yo",
+        "hello chatbot",
+        "hey buddy",
+        "good day"
+      ],
+      "responses": [
+        "Hello! How can I help you today?",
+        "Hi there! What can I do for you?",
+        "Hey! Ask me anything."
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": [
+        "bye",
+        "goodbye",
+        "see you later",
+        "see you",
+        "talk to you later",
+        "i have to go",
+        "catch you later",
+        "bye bye",
+        "i am leaving",
+        "that is all",
+        "exit",
+        "i'm off",
+        "ok i have to leave now",
+        "time to go",
+        "gotta go",
+        "i'm heading out"
+      ],
+      "responses": [
+        "Goodbye! Have a great day.",
+        "See you later!",
+        "Bye! Come back anytime."
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": [
+        "thanks",
+        "thank you",
+        "thanks a lot",
+        "that's helpful",
+        "thank you so much",
+        "appreciate it",
+        "awesome thanks",
+        "thanks for helping me",
+        "great help",
+        "cheers"
+      ],
+      "responses": [
+        "You're welcome!",
+        "Happy to help!",
+        "Anytime!"
+      ]
+    },
+    {
+      "tag": "how_are_you",
+      "patterns": [
+        "how are you",
+        "how are you doing",
+        "how is it going",
+        "how do you feel",
+        "are you okay",
+        "what's up",
+        "how have you been",
+        "how is your day",
+        "hello how are you doing",
+        "hi how is your day going",
+        "hey how are you",
+        "hello how are you",
+        "how's your day been",
+        "hi how are things",
+        "hey how is your day"
+      ],
+      "responses": [
+        "I'm doing great, thanks for asking! How about you?",
+        "All systems running smoothly. How can I help?"
+      ]
+    },
+    {
+      "tag": "user_feeling_good",
+      "patterns": [
+        "i am fine",
+        "i am good",
+        "i am doing well",
+        "i'm great",
+        "feeling good",
+        "i am happy",
+        "pretty good",
+        "not bad"
+      ],
+      "responses": [
+        "Glad to hear that!",
+        "That's wonderful!"
+      ]
+    },
+    {
+      "tag": "user_feeling_bad",
+      "patterns": [
+        "i am sad",
+        "i feel bad",
+        "i am not okay",
+        "i am depressed",
+        "feeling low",
+        "i am tired",
+        "i am stressed",
+        "bad day",
+        "i feel lonely",
+        "i am upset"
+      ],
+      "responses": [
+        "I'm sorry you're feeling that way. Taking a short break or talking to a friend can really help.",
+        "That sounds tough. I'm here if you want to chat."
+      ]
+    },
+    {
+      "tag": "name",
+      "patterns": [
+        "what is your name",
+        "who are you",
+        "what should i call you",
+        "tell me your name",
+        "your name please",
+        "introduce yourself",
+        "what are you"
+      ],
+      "responses": [
+        "I'm Willow, a voice-enabled assistant powered by speech recognition and a deep learning intent classifier."
+      ]
+    },
+    {
+      "tag": "creator",
+      "patterns": [
+        "who made you",
+        "who created you",
+        "who built you",
+        "who developed you",
+        "who is your creator",
+        "who designed you"
+      ],
+      "responses": [
+        "I was built as a student project using Python, Flask, PyTorch and speech recognition."
+      ]
+    },
+    {
+      "tag": "capabilities",
+      "patterns": [
+        "what can you do",
+        "help",
+        "how can you help me",
+        "what are your features",
+        "what do you do",
+        "show me what you can do",
+        "what can i ask you",
+        "help me",
+        "what else can you do",
+        "what else can you do other than that",
+        "anything else you can do",
+        "what other things can you do",
+        "what more can you do",
+        "list your features",
+        "what are you good at",
+        "what can you tell me",
+        "what are your abilities",
+        "what are your skills",
+        "what are you able to do",
+        "what else can you do besides jokes",
+        "other than that what can you do",
+        "what can you do apart from this"
+      ],
+      "responses": [
+        "Lots! I can chat, answer general knowledge questions ('who is Alan Turing'), do maths ('what is 12 times 8'), tell you the time and date, tell jokes, riddles and fun facts, motivate you, give study tips, and remember your name. Just speak or type!"
+      ]
+    },
+    {
+      "tag": "time",
+      "patterns": [
+        "what time is it",
+        "tell me the time",
+        "current time",
+        "what is the time",
+        "time please",
+        "do you know the time",
+        "what's the time now",
+        "what does the clock say",
+        "check the clock",
+        "what hour is it"
+      ],
+      "responses": [
+        "{time}"
+      ]
+    },
+    {
+      "tag": "date",
+      "patterns": [
+        "what is the date",
+        "what is today's date",
+        "which day is it",
+        "what day is today",
+        "tell me the date",
+        "today's date",
+        "current date"
+      ],
+      "responses": [
+        "{date}"
+      ]
+    },
+    {
+      "tag": "joke",
+      "patterns": [
+        "tell me a joke",
+        "make me laugh",
+        "say something funny",
+        "joke please",
+        "do you know any jokes",
+        "i want to hear a joke",
+        "another joke",
+        "be funny",
+        "tell me a funny one",
+        "say a funny joke",
+        "know any good jokes",
+        "can you tell me something funny"
+      ],
+      "responses": [
+        "Why do programmers prefer dark mode? Because light attracts bugs.",
+        "Why did the neural network break up? It had too many hidden issues.",
+        "I told my computer I needed a break, and it said: no problem, I'll go to sleep.",
+        "Why was the math book sad? It had too many problems.",
+        "Why do Java developers wear glasses? Because they don't C#.",
+        "There are 10 types of people: those who understand binary and those who don't.",
+        "Why did the computer go to the doctor? It had a virus.",
+        "I would tell you a UDP joke, but you might not get it.",
+        "Why don't scientists trust atoms? Because they make up everything.",
+        "What do you call a fake noodle? An impasta.",
+        "Why did the scarecrow win an award? He was outstanding in his field.",
+        "How does a computer get drunk? It takes screenshots."
+      ]
+    },
+    {
+      "tag": "fun_fact",
+      "patterns": [
+        "tell me a fact",
+        "tell me something interesting",
+        "fun fact",
+        "give me a random fact",
+        "teach me something",
+        "did you know",
+        "interesting fact",
+        "tell me a fun fact i haven't heard",
+        "something i probably don't know",
+        "share a random fact",
+        "amaze me with a fact"
+      ],
+      "responses": [
+        "Honey never spoils. Archaeologists have found edible honey in ancient Egyptian tombs.",
+        "Octopuses have three hearts and blue blood.",
+        "The first computer bug was an actual moth found in a Harvard computer in 1947.",
+        "A day on Venus is longer than a year on Venus.",
+        "Bananas are berries, but strawberries are not.",
+        "Wombat poop is cube-shaped.",
+        "There are more possible chess games than atoms in the observable universe.",
+        "Sharks existed before trees.",
+        "A group of flamingos is called a flamboyance.",
+        "Your brain uses about 20 percent of your body's energy.",
+        "The Eiffel Tower can grow about 15 centimetres taller in summer due to heat expansion.",
+        "Cleopatra lived closer in time to the Moon landing than to the building of the Great Pyramid."
+      ]
+    },
+    {
+      "tag": "speech_recognition",
+      "patterns": [
+        "how do you understand my voice",
+        "what is speech recognition",
+        "how does speech recognition work",
+        "how do you hear me",
+        "how do you convert speech to text",
+        "how does voice input work"
+      ],
+      "responses": [
+        "Your voice is captured by the microphone and converted to text using speech recognition: the audio is turned into acoustic features and an acoustic and language model decodes it into the most likely words."
+      ]
+    },
+    {
+      "tag": "deep_learning",
+      "patterns": [
+        "what is deep learning",
+        "how do you work",
+        "how do you understand me",
+        "what model do you use",
+        "explain your model",
+        "are you an ai",
+        "what is a neural network",
+        "how were you trained",
+        "are you an llm",
+        "are you a large language model",
+        "are you chatgpt",
+        "are you a robot",
+        "are you a real person",
+        "are you human",
+        "are you artificial intelligence",
+        "is this machine learning",
+        "what technology do you use"
+      ],
+      "responses": [
+        "Deep learning uses multi-layer neural networks that learn patterns from data. That's how I work: a pretrained transformer (MiniLM) turns your sentence into a meaning vector, and a PyTorch neural network predicts your intent. I'm not a large language model, and for factual questions I look things up on Wikipedia."
+      ]
+    },
+    {
+      "tag": "weather",
+      "patterns": [
+        "what is the weather",
+        "how is the weather today",
+        "is it going to rain",
+        "weather forecast",
+        "is it hot outside",
+        "will it be sunny"
+      ],
+      "responses": [
+        "I don't have live weather data, but a weather app or website will give you an accurate forecast."
+      ]
+    },
+    {
+      "tag": "age",
+      "patterns": [
+        "how old are you",
+        "what is your age",
+        "when were you born",
+        "when were you made"
+      ],
+      "responses": [
+        "I'm quite new. I was trained just recently!"
+      ]
+    },
+    {
+      "tag": "hobby",
+      "patterns": [
+        "what do you like",
+        "what are your hobbies",
+        "what do you do for fun",
+        "do you have hobbies",
+        "what is your favourite thing"
+      ],
+      "responses": [
+        "I enjoy listening to people and learning new words!"
+      ]
+    },
+    {
+      "tag": "compliment",
+      "patterns": [
+        "you are smart",
+        "you are awesome",
+        "good bot",
+        "you are amazing",
+        "i like you",
+        "you are cool",
+        "nice job",
+        "well done"
+      ],
+      "responses": [
+        "Thank you, that's kind of you!",
+        "Aww, thanks! You're great too."
+      ]
+    },
+    {
+      "tag": "insult",
+      "patterns": [
+        "you are stupid",
+        "you are dumb",
+        "bad bot",
+        "you are useless",
+        "i hate you",
+        "you are annoying"
+      ],
+      "responses": [
+        "Sorry I let you down. I'm still learning. Could you rephrase that?"
+      ]
+    },
+    {
+      "tag": "study_tips",
+      "patterns": [
+        "how to study better",
+        "give me study tips",
+        "how can i focus",
+        "how to prepare for exams",
+        "tips for studying",
+        "how to concentrate"
+      ],
+      "responses": [
+        "Try the Pomodoro technique: 25 minutes of focused study and a 5-minute break. Remove distractions and review your notes regularly."
+      ]
+    },
+    {
+      "tag": "motivation",
+      "patterns": [
+        "motivate me",
+        "i need motivation",
+        "inspire me",
+        "say something motivating",
+        "give me a quote",
+        "i want to give up",
+        "i feel like giving up",
+        "i want to quit",
+        "encourage me"
+      ],
+      "responses": [
+        "Success is the sum of small efforts repeated day in and day out. Keep going!",
+        "Every expert was once a beginner. You've got this!",
+        "Don't watch the clock; do what it does. Keep going.",
+        "Small progress is still progress.",
+        "The best time to start was yesterday. The next best time is now."
+      ]
+    },
+    {
+      "tag": "more",
+      "patterns": [
+        "another one",
+        "tell me another",
+        "one more",
+        "again",
+        "something else",
+        "i have heard that before",
+        "i already know that",
+        "i've heard that one",
+        "heard it already",
+        "give me a different one",
+        "next one",
+        "more please",
+        "not that one",
+        "that's old"
+      ],
+      "responses": [
+        "{more}"
+      ]
+    },
+    {
+      "tag": "riddle",
+      "patterns": [
+        "tell me a riddle",
+        "give me a riddle",
+        "ask me a riddle",
+        "i want a puzzle",
+        "do you know any riddles"
+      ],
+      "responses": [
+        "What has keys but can't open locks? A piano!",
+        "What gets wetter the more it dries? A towel!",
+        "What has hands but can't clap? A clock!",
+        "The more you take, the more you leave behind. What am I? Footsteps!"
+      ]
+    },
+    {
+      "tag": "bored",
+      "patterns": [
+        "i am bored",
+        "i'm so bored",
+        "nothing to do",
+        "entertain me",
+        "what should i do",
+        "suggest something to do"
+      ],
+      "responses": [
+        "How about a riddle, a joke, or a fun fact? Just ask!",
+        "You could learn something new: ask me about any topic, like 'who is Alan Turing'."
+      ]
+    },
+    {
+      "tag": "location",
+      "patterns": [
+        "where are you",
+        "where do you live",
+        "where are you from",
+        "where is your home"
+      ],
+      "responses": [
+        "I live in the cloud, running on a server somewhere on the internet!"
+      ]
+    },
+    {
+      "tag": "apology",
+      "patterns": [
+        "sorry",
+        "i am sorry",
+        "my bad",
+        "apologies",
+        "oops"
+      ],
+      "responses": [
+        "No worries at all!",
+        "That's okay!"
+      ]
+    },
+    {
+      "tag": "affirm",
+      "patterns": [
+        "yes",
+        "yeah",
+        "sure",
+        "okay",
+        "ok",
+        "alright",
+        "yep",
+        "cool"
+      ],
+      "responses": [
+        "Great! What would you like to do next?",
+        "Alright! Ask me anything."
+      ]
+    },
+    {
+      "tag": "deny",
+      "patterns": [
+        "no",
+        "nope",
+        "not really",
+        "no thanks",
+        "nah"
+      ],
+      "responses": [
+        "Okay, no problem. Let me know if you need anything."
+      ]
+    },
+    {
+      "tag": "meaning_of_life",
+      "patterns": [
+        "what is the meaning of life",
+        "why are we here",
+        "what is the purpose of life"
+      ],
+      "responses": [
+        "42, according to The Hitchhiker's Guide to the Galaxy. But I think it's whatever you make it."
+      ]
+    },
+    {
+      "tag": "math_help",
+      "patterns": [
+        "can you do math",
+        "can you calculate",
+        "are you good at maths",
+        "solve a math problem"
+      ],
+      "responses": [
+        "Yes! Try saying something like 'what is 25 times 4' or '144 divided by 12'."
+      ]
+    },
+    {
+      "tag": "knowledge_help",
+      "patterns": [
+        "can you answer questions",
+        "do you know things",
+        "can you answer general knowledge questions",
+        "can i ask you about anything"
+      ],
+      "responses": [
+        "Yes! Ask 'who is', 'what is' or 'tell me about' anything, and I'll look it up on Wikipedia for you."
+      ]
+    },
+    {
+      "tag": "about_user",
+      "patterns": [
+        "what do you think about me",
+        "what do you think of me",
+        "do you like me",
+        "am i a good person",
+        "are we friends",
+        "do you care about me",
+        "what is your opinion of me"
+      ],
+      "responses": [
+        "I think you are wonderful company! Thanks for chatting with me.",
+        "We are definitely friends. I always enjoy our chats!"
+      ]
+    },
+    {
+      "tag": "favorites",
+      "patterns": [
+        "what is your favourite color",
+        "what is your favorite food",
+        "what is your favorite movie",
+        "do you have a favorite song",
+        "what's your favourite animal",
+        "what is your favourite book"
+      ],
+      "responses": [
+        "I love sage green, the sound of gentle rain, and a good conversation. What's your favourite?"
+      ]
+    },
+    {
+      "tag": "are_you_real",
+      "patterns": [
+        "are you real",
+        "are you alive",
+        "do you have feelings",
+        "are you conscious",
+        "do you sleep",
+        "do you dream",
+        "do you eat"
+      ],
+      "responses": [
+        "I'm a computer program, so I don't sleep, eat or feel the way you do, but I'm always happy to chat."
+      ]
+    },
+    {
+      "tag": "can_you_hear",
+      "patterns": [
+        "can you hear me",
+        "are you listening",
+        "hello can you hear me",
+        "is this working",
+        "testing testing",
+        "mic check"
+      ],
+      "responses": [
+        "Yes, I can hear you loud and clear! What would you like to talk about?"
+      ]
+    },
+    {
+      "tag": "repeat",
+      "patterns": [
+        "repeat that",
+        "say that again",
+        "can you repeat",
+        "what did you say",
+        "pardon",
+        "come again"
+      ],
+      "responses": [
+        "{repeat}"
+      ]
+    },
+    {
+      "tag": "goodnight",
+      "patterns": [
+        "good night",
+        "goodnight",
+        "i am going to sleep",
+        "time for bed",
+        "sweet dreams"
+      ],
+      "responses": [
+        "Good night! Sleep well and sweet dreams.",
+        "Good night! Rest well."
+      ]
+    },
+    {
+      "tag": "languages",
+      "patterns": [
+        "what languages do you speak",
+        "do you speak hindi",
+        "can you speak other languages",
+        "do you understand spanish",
+        "which languages do you know"
+      ],
+      "responses": [
+        "I understand and speak English best right now. My speech recognition is set to English."
+      ]
+    },
+    {
+      "tag": "love",
+      "patterns": [
+        "i love you",
+        "will you marry me",
+        "do you love me",
+        "be my friend",
+        "you are my best friend"
+      ],
+      "responses": [
+        "That's very sweet! I'm happy to be your friendly assistant anytime."
+      ]
+    },
+    {
+      "tag": "help_problem",
+      "patterns": [
+        "i need help",
+        "can you help me",
+        "i have a problem",
+        "please help",
+        "help me please"
+      ],
+      "responses": [
+        "Of course! Tell me what you need, and I'll do my best to help."
+      ]
+    },
+    {
+      "tag": "news",
+      "patterns": [
+        "what is the news today",
+        "tell me the latest news",
+        "any news",
+        "what happened today",
+        "latest headlines",
+        "sports scores today"
+      ],
+      "responses": [
+        "I don't have access to live news, but a news website or app will have the latest headlines."
+      ]
+    },
+    {
+      "tag": "busy",
+      "patterns": [
+        "are you busy",
+        "do you have time",
+        "can we talk",
+        "can i ask you something",
+        "i have a question"
+      ],
+      "responses": [
+        "I always have time for you. Go ahead and ask!"
+      ]
+    },
+    {
+      "tag": "laugh",
+      "patterns": [
+        "haha",
+        "lol",
+        "that's funny",
+        "hahaha",
+        "that was funny",
+        "you are funny"
+      ],
+      "responses": [
+        "Glad I could make you smile!",
+        "Haha, I'm here all day!"
+      ]
+    }
+  ]
+}

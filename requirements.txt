@@ -1,0 +1,9 @@
+flask
+gunicorn
+numpy
+onnxruntime
+tokenizers
+huggingface_hub
+SpeechRecognition
+tzdata
+anthropic
